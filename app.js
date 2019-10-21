@@ -46,6 +46,7 @@ let requestBody = esb.requestBodySearch()
         .must(esb.matchPhraseQuery('gs.app', 'hello'))
         .must(esb.matchPhraseQuery('gs.svcuser', 'guest'))
         .must(esb.rangeQuery('@timestamp').gte(1562737886567).lte(1562752286567).format('epoch_millis')))
+    .sort(esb.sort('@timestamp','desc').unmappedType('date'))
     .agg(esb.dateHistogramAggregation('2', '@timestamp', '5m').timeZone('+08:00').minDocCount(0).extendedBounds(1562737886567, 1562752286567)
         .agg(esb.avgAggregation('1', 'gu.duration')));
 let json = requestBody.toJSON();
