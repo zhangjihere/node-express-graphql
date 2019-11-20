@@ -23,6 +23,31 @@ const sdc = new SDC({
     prefix: process.env.Config_statsd_prefix || "backend"
 });
 
+// Example for http to send log.
+const http = require("http");
+let options = {
+    hostname: "13.209.72.232",
+    port: 1092,
+    path: "/",
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Content-Length": 0,
+    },
+};
+function sendLog(msg1, msg2) {
+    console.log(msg1, msg2)
+    if (msg2 === undefined) {
+        msg2 = ""
+    }
+    let msg = msg1 + msg2;
+    let length = JSON.stringify({ "msg": msg }).length;
+    options.headers["Content-Length"] = length;
+    let req = http.request(options);
+    // req.write(JSON.stringify({ "msg": msg }));
+    // req.end();
+}
+
 var app = express();
 
 // view engine setup
@@ -85,7 +110,8 @@ const schema = buildSchema(`
             range: String,
             interval: String!, 
             time_zone: String!, 
-            type: String!): String
+            type: String!,
+            order: String): String
         activationMetric(activationId: String!): String
     }
 `);
@@ -99,7 +125,7 @@ const root = {
         }
         return output;
     },
-    activationMetricHistogram: function ({size, gs_app, gs_svcuser, time_min, time_max, range, interval, time_zone, type}) {
+    activationMetricHistogram: function ({size, gs_app, gs_svcuser, time_min, time_max, range, interval, time_zone, type, order="desc"}) {
         if (range) {
             let num = Number(range.substring(0, range.length - 1));
             time_max = (new Date).getTime();
@@ -109,6 +135,7 @@ const root = {
             .must(esb.matchPhraseQuery('gs.app', gs_app))
             .must(esb.matchPhraseQuery('gs.svcuser', gs_svcuser))
             .must(esb.rangeQuery('@timestamp').gte(Number(time_min)).lte(Number(time_max)).format('epoch_millis'));
+        let sort_options = esb.sort('@timestamp',order).unmappedType('date');
         let date_hist_agg = esb.dateHistogramAggregation('2', '@timestamp', interval)
             .timeZone(time_zone)
             .minDocCount(0)
@@ -130,6 +157,7 @@ const root = {
             .version(true)
             .size(size)
             .query(bool_query)
+            .sort(sort_options)
             .agg(date_hist_agg);
         return requestES(es_query, 'activationMetricHistogram');
     },
