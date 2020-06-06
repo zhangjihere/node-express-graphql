@@ -12,7 +12,7 @@
     "@types/graphql": "^14.2.2",
     "@types/json5": "0.0.30",
     "@types/node": "^12.6.8",
-    "apollo-server-express": "^1.3.4",
+    "apollo-server-express": "^2.14.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "elastic-builder": "~2.3.1",
