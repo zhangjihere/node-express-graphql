@@ -16,7 +16,7 @@
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "elastic-builder": "~2.3.1",
-    "express": "~4.16.1",
+    "express": "~4.18.2",
     "express-graphql": "^0.6.11",
     "got": "^8.3.1",
     "graphql": "^0.12.3",
