@@ -23,7 +23,7 @@
     "http-errors": "~1.6.3",
     "https-proxy-agent": "^2.2.1",
     "jade": "~1.11.0",
-    "json5": "^1.0.1",
+    "json5": "^1.0.2",
     "morgan": "~1.9.1",
     "tunnel": "0.0.6",
     "statsd-client-cached": "^1.0.0"
